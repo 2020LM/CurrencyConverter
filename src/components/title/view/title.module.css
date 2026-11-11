@@ -1,0 +1,15 @@
+:root {
+  --title-blue: #1d4ed8;
+  --subtitle-black: #1a1a1a;
+}
+
+.title {
+  color: var(--title-blue);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.subtitle {
+  color: var(--subtitle-black);
+  text-align: center;
+}

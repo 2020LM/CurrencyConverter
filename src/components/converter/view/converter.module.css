@@ -1,0 +1,123 @@
+:root {
+  --converter-background: #fff;
+  --converter-border: #e2e8f0;
+  --converter-shadow: rgb(30 64 175 / 10%);
+  --converter-label: #334155;
+  --converter-input-border: #cbd5e1;
+  --converter-input-text: #1e293b;
+  --converter-accent: #1d4ed8;
+  --converter-result-text: #475569;
+}
+
+.card {
+  width: min(100%, 56rem);
+  padding: clamp(1.25rem, 4vw, 2rem);
+  background: var(--converter-background);
+  border: 1px solid var(--converter-border);
+  border-radius: 1rem;
+  box-shadow: 0 12px 32px var(--converter-shadow);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: end;
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.field label {
+  color: var(--converter-label);
+  font-weight: 600;
+}
+
+.currencyLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.flag {
+  width: 1.5rem;
+  height: 1.125rem;
+  object-fit: cover;
+  border-radius: 0.125rem;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--converter-input-border);
+  border-radius: 0.5rem;
+  color: var(--converter-input-text);
+}
+
+.field input:focus-visible,
+.field select:focus-visible {
+  outline: 2px solid var(--converter-accent);
+  outline-offset: 2px;
+}
+
+.swapButton {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  align-self: end;
+  margin-bottom: 0.75rem;
+}
+
+.swapButton:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.result {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--converter-border);
+  color: var(--converter-result-text);
+}
+
+.result p {
+  margin: 0 0 0.5rem;
+}
+
+.result p:nth-child(2) {
+  color: var(--converter-accent);
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.result p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  .controls {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  }
+
+  .field:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 360px) {
+  .controls {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .field:last-child {
+    grid-column: 1 / -1;
+  }
+}

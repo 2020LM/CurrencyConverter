@@ -1,0 +1,21 @@
+
+.app {
+    background: linear-gradient(135deg, #f8fafc 0%, #e0edff 100%);
+    width: 100%;
+    min-height: 100vh;
+    padding-block: 2rem 1.5rem;
+    display: grid;
+    place-items: center;
+}
+
+.content {
+    width: min(56rem, calc(100% - 2rem));
+    min-width: 0;
+}
+
+@media (max-width: 600px) and (orientation: portrait) {
+    .app {
+        padding-top: 3rem;
+        row-gap: 2rem;
+    }
+}

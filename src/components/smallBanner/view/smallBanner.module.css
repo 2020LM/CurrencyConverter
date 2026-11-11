@@ -1,0 +1,52 @@
+:root {
+  --banner-background: #fff;
+  --banner-border: #e2e8f0;
+  --banner-text: #1e3a8a;
+  --banner-description: #475569;
+  --banner-shadow: rgb(30 64 175 / 8%);
+}
+
+.bannerGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  min-width: 0;
+  padding: 1rem 1.25rem;
+  background: var(--banner-background);
+  border: 1px solid var(--banner-border);
+  border-radius: 1rem;
+  box-shadow: 0 8px 24px var(--banner-shadow);
+  color: var(--banner-text);
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 0.6rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.icon {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  margin: 0 auto 0.6rem;
+}
+
+.description {
+  margin: 0;
+  color: var(--banner-description);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .bannerGrid {
+    grid-template-columns: 1fr;
+  }
+}
