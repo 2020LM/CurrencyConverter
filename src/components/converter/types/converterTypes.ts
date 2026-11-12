@@ -5,4 +5,5 @@ export interface Currency {
   currentValue: number
   country: string
   src: string
+  link: string
 }

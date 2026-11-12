@@ -1,0 +1,5 @@
+// State of the currency when this is consumed.
+
+export const FETCH_CURRENCY_REQUESTED = 'FETCH_CURRENCY_REQUESTED'
+export const FETCH_CURRENCY_SUCCEEDED = 'FETCH_CURRENCY_SUCCEEDED'
+export const FETCH_CURRENCY_FALIED = 'FETCH_CURRENCY_FALIED'
