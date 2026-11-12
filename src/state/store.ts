@@ -1,5 +1,6 @@
 // Internal imports
 import currencyReducer from './slices/currencySlice'
+import type { RootState } from './types/storeTypes'
 
 // External imports
 import { configureStore } from '@reduxjs/toolkit'
@@ -9,7 +10,6 @@ export const store = configureStore({
   reducer: { currency: currencyReducer },
 })
 
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type { RootState, AppDispatch } from './types/storeTypes'
 
 export const useAppSelector = useSelector.withTypes<RootState>()

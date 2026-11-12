@@ -4,6 +4,7 @@ import swapIcon from '../../../assets/arrow-left-right.svg'
 import { setFrom, setTo, swapCurrencies } from '../../../state/slices/currencySlice'
 import { useAppSelector } from '../../../state/store'
 import type { AppDispatch } from '../../../state/store'
+import { useDebounce } from '../../../internalTools/customHooks/useDebounce'
 
 // External imports
 import { useState } from 'react'
@@ -20,6 +21,8 @@ export const Converter = () => {
   const result = amount.trim() !== '' && Number.isFinite(numericAmount) && numericAmount >= 0
     ? (numericAmount * currentRate).toFixed(2)
     : '—'
+
+  useDebounce(amount, from, to)
 
   return (
     <div className={styles.card}>
