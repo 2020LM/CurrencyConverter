@@ -27,6 +27,7 @@ Bootstrap se carga desde `src/main.tsx`. El store de Redux esta en
 
 El euro tiene una tasa base de 1; las demas tasas se consultan al BCE.
 Hasta obtenerlas no se muestra una conversion entre distintas monedas.
+Mientras se esperan las tasas necesarias, el conversor muestra `Loading...`.
 Las banderas provienen de
 [Flag Icons](https://github.com/lipis/flag-icons); su licencia esta en
 `src/assets/countries/LICENSE`.
