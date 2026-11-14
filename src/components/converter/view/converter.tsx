@@ -5,24 +5,29 @@ import { setFrom, setTo, swapCurrencies } from '../../../state/slices/currencySl
 import { useAppSelector } from '../../../state/store'
 import type { AppDispatch } from '../../../state/store'
 import { useDebounce } from '../../../internalTools/customHooks/useDebounce'
+import { exchangeCurrency } from '../../../services/moneyRequest/thunkRequest'
 
 // External imports
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 export const Converter = () => {
-  const [amount, setAmount] = useState('2')
   const dispatch = useDispatch<AppDispatch>()
-  const { currencies, from, to } = useAppSelector((state) => state.currency)
-  const fromCurrency = currencies.find((currency) => currency.shortName === from)
-  const toCurrency = currencies.find((currency) => currency.shortName === to)
-  const currentRate = 1
-  const numericAmount = Number(amount)
-  const result = amount.trim() !== '' && Number.isFinite(numericAmount) && numericAmount >= 0
-    ? (numericAmount * currentRate).toFixed(2)
-    : '—'
+  const { currencies, from, to, amount, result } = useAppSelector((state) => state.currency)
+  const fromCurrency = currencies.find((currency) => currency.shortName === from.code)
+  const toCurrency = currencies.find((currency) => currency.shortName === to.code)
+  const currentRate = from.code === to.code
+    ? 1
+    : from.rate !== null && to.rate !== null
+      ? to.rate / from.rate
+      : null
+  const formattedResult = result === null ? '—' : result.toFixed(2)
 
-  useDebounce(amount, from, to)
+  useEffect(() => {
+    void dispatch(exchangeCurrency(amount))
+  }, [dispatch, amount, from.code, to.code])
+
+  useDebounce(amount, from.code, to.code)
 
   return (
     <div className={styles.card}>
@@ -30,14 +35,14 @@ export const Converter = () => {
         <div className={styles.controls}>
           <div className={styles.field}>
             <label htmlFor="amount">Amount</label>
-            <input type="text" id="amount" aria-label="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
+            <input type="text" id="amount" aria-label="Amount" value={amount} onChange={(e) => { void dispatch(exchangeCurrency(e.target.value)) }} />
           </div>
 
           <div className={styles.field}>
             <label htmlFor="from" className={styles.currencyLabel}>
               From {fromCurrency && <img src={fromCurrency.src} alt="" className={styles.flag} />}
             </label>
-            <select id="from" value={from} onChange={(e) => dispatch(setFrom(e.target.value))}>
+            <select id="from" value={from.code} onChange={(e) => dispatch(setFrom(e.target.value))}>
               {currencies.map((currency) => (
                 <option key={currency.shortName} value={currency.shortName}>
                   {currency.shortName} - {currency.currencyName} ({currency.country})
@@ -54,7 +59,7 @@ export const Converter = () => {
             <label htmlFor="to" className={styles.currencyLabel}>
               To {toCurrency && <img src={toCurrency.src} alt="" className={styles.flag} />}
             </label>
-            <select id="to" value={to} onChange={(e) => dispatch(setTo(e.target.value))}>
+            <select id="to" value={to.code} onChange={(e) => dispatch(setTo(e.target.value))}>
               {currencies.map((currency) => (
                 <option key={currency.shortName} value={currency.shortName}>
                   {currency.shortName} - {currency.currencyName} ({currency.country})
@@ -64,10 +69,12 @@ export const Converter = () => {
           </div>
         </div>
         <div className={styles.result}>
-          <p>Current Value (placeholder rates): </p>
-          <p>{result}{result !== '—' && toCurrency?.logo}</p>
-          <p>1 {from} = {currentRate} {to}</p>
-          <p>{amount} {from} = {result} {to}</p>
+          <p>{currentRate === null ? 'Exchange rate unavailable' : 'Current Value:'}</p>
+          <p>{formattedResult}{result !== null && toCurrency?.logo}</p>
+          <p>1 {from.code} = {currentRate ?? '—'} {to.code}</p>
+          <p>{amount} {from.code} = {formattedResult} {to.code}</p>
+          {from.error && <p role="alert">{from.code}: {from.error}</p>}
+          {to.error && <p role="alert">{to.code}: {to.error}</p>}
         </div>
 
       </form>

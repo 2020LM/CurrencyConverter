@@ -25,8 +25,9 @@ Bootstrap se carga desde `src/main.tsx`. El store de Redux esta en
 `src/state/store.ts` y las divisas iniciales en
 `src/components/converter/data/currencyData.ts`.
 
-Las tasas y los resultados actuales son provisionales: se usa una tasa fija de
-1 para todas las divisas, no datos reales de una API. Las banderas provienen de
+El euro tiene una tasa base de 1; las demas tasas se consultan al BCE.
+Hasta obtenerlas no se muestra una conversion entre distintas monedas.
+Las banderas provienen de
 [Flag Icons](https://github.com/lipis/flag-icons); su licencia esta en
 `src/assets/countries/LICENSE`.
 
@@ -36,6 +37,11 @@ Cada divisa incluye un `link` al Banco Central Europeo (BCE).
 serie USD/EUR y no representa una tasa EUR/EUR. Si falla la consulta o los
 datos no son validos, la promesa se rechaza.
 
-El conversor todavia no utiliza esta funcion. Las tasas del BCE son
-referencias publicadas, no cotizaciones en tiempo real. Al calcular una
-conversion entre dos divisas, es importante utilizar tasas de la misma fecha.
+Las tasas del BCE son referencias publicadas, no cotizaciones en tiempo real. Al calcular una
+conversion entre dos divisas, es importante utilizar tasas de la misma fecha;
+la implementacion actual aun no verifica que las fechas coincidan.
+
+El thunk manual `exchangeCurrency(amount)` actualiza la cantidad y consulta las
+tasas necesarias. El slice guarda el resultado numerico, las tasas y sus
+errores; descarta respuestas de selecciones anteriores y recalcula el resultado
+con la cantidad mas reciente. Al escribir, se reutilizan las tasas disponibles.

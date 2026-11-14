@@ -1,21 +1,41 @@
 // Internal imports
 import type { Currency } from '../../components/converter/types/converterTypes'
 import { EUR } from '../../constants/currencyNames'
+import { rateFailed, rateRequested, rateSucceeded, setAmount } from '../../state/slices/currencySlice'
+import type { RootState } from '../../state/types/storeTypes'
 
 // External imports
+import { nanoid, type ThunkAction, type UnknownAction } from '@reduxjs/toolkit'
 
-// Converts an amount between currencies.
-export const exchangeCurrency = (amount: string, currencyFrom: Currency, currencyTo: Currency) => {
+export const exchangeCurrency = (amount: string): ThunkAction<Promise<void>, RootState, unknown, UnknownAction> =>
+    async (dispatch, getState) => {
+        dispatch(setAmount(amount))
+        const { from, to, currencies, requestIds } = getState().currency
+        if (from.code === to.code) return
 
+        const requestId = nanoid()
+        const loadRate = async (side: 'from' | 'to'): Promise<void> => {
+            const selected = side === 'from' ? from : to
+            const { code, rate, error } = selected
+            if (rate !== null || error !== null || requestIds[side] !== null) return
+            const request = { side, code, requestId }
+            dispatch(rateRequested(request))
+            try {
+                const currency = currencies.find((item) => item.shortName === code)
+                if (!currency) throw new Error(`Unknown currency: ${code}`)
+                const fetchedRate = await requestRate(currency)
+                dispatch(rateSucceeded({ ...request, rate: fetchedRate }))
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : String(error)
+                dispatch(rateFailed({ ...request, error: message }))
+            }
+        }
 
-    if (currencyFrom.currencyName == currencyTo.currencyName) {
-        return amount
+        await Promise.all([
+            loadRate('from'),
+            loadRate('to'),
+        ])
     }
-
-   
- 
-
-}
 
 // Converts a value to a positive, finite exchange rate.
 const positiveRate = (value: unknown): number => {
