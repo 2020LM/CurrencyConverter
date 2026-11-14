@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux'
 
 export const Converter = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const { currencies, from, to, amount, result } = useAppSelector((state) => state.currency)
+  const { currencies, from, to, amount, result, requestIds } = useAppSelector((state) => state.currency)
   const fromCurrency = currencies.find((currency) => currency.shortName === from.code)
   const toCurrency = currencies.find((currency) => currency.shortName === to.code)
   const currentRate = from.code === to.code
@@ -22,6 +22,7 @@ export const Converter = () => {
       ? to.rate / from.rate
       : null
   const formattedResult = result === null ? '—' : result.toFixed(2)
+  const loading = from.code !== to.code && (requestIds.from !== null || requestIds.to !== null)
 
   useEffect(() => {
     void dispatch(exchangeCurrency(amount))
@@ -69,9 +70,9 @@ export const Converter = () => {
           </div>
         </div>
         <div className={styles.result}>
-          <p>{currentRate === null ? 'Exchange rate unavailable' : 'Current Value:'}</p>
+          <p>{loading ? <span role="status">Loading...</span> : currentRate === null ? 'Exchange rate unavailable' : 'Current Value:'}</p>
           <p>{formattedResult}{result !== null && toCurrency?.logo}</p>
-          <p>1 {from.code} = {currentRate ?? '—'} {to.code}</p>
+          <p>1 {from.code} = {currentRate === null ? '—' : currentRate.toFixed(2)} {to.code}</p>
           <p>{amount} {from.code} = {formattedResult} {to.code}</p>
           {from.error && <p role="alert">{from.code}: {from.error}</p>}
           {to.error && <p role="alert">{to.code}: {to.error}</p>}
