@@ -55,13 +55,13 @@ test('renders Converter component', async () => {
  renderConverter()
 
  // To check the existance of all the elements in the component.
- expect(screen.getAllByRole('textbox')).toHaveLength(1)
+ expect(screen.getAllByRole('spinbutton')).toHaveLength(1)
  expect(screen.getAllByRole('combobox')).toHaveLength(2)
  expect(screen.getAllByRole('paragraph')).toHaveLength(4)
  expect(screen.getAllByRole('button')).toHaveLength(1)
 
  // To check the text content of the elements.
- expect(screen.getByRole('textbox', { name: RegExp('Amount','i')})).toBeInTheDocument()
+ expect(screen.getByRole('spinbutton', { name: RegExp('Amount','i')})).toBeInTheDocument()
  expect(screen.getByRole('combobox', { name: RegExp('From','i')})).toBeInTheDocument()
  expect(screen.getByRole('combobox', { name: RegExp('To','i')})).toBeInTheDocument()
  await screen.findByText('2 USD = 1.80 EUR')
@@ -95,11 +95,18 @@ test('shows twelve currencies in both selectors and converts the initial amount'
 test('does not display a numeric result for invalid or empty amounts', async () => {
  renderConverter()
  await screen.findByText('2 USD = 1.80 EUR')
- const amount = screen.getByRole('textbox', { name: RegExp('amount', 'i') })
- for (const value of ['', '   ', '-5', 'abc']) {
+ const amount = screen.getByRole('spinbutton', { name: RegExp('amount', 'i') })
+ for (const value of ['-5', '']) {
   fireEvent.change(amount, { target: { value } })
   expect(screen.getByText('—')).toBeInTheDocument()
  }
+})
+
+test('converts a decimal amount', async () => {
+ renderConverter()
+ await screen.findByText('2 USD = 1.80 EUR')
+ fireEvent.change(screen.getByRole('spinbutton', { name: RegExp('amount', 'i') }), { target: { value: '2.5' } })
+ expect(screen.getByText('2.5 USD = 2.25 EUR')).toBeInTheDocument()
 })
 
 describe('currency conversion with the API', () => {
