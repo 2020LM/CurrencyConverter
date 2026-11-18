@@ -120,14 +120,7 @@ This project is intended to compare three ways of requesting ECB data:
 
 Only the manual Redux Thunk approach is currently implemented.
 
-## 🗂️ Git and generated files
-
-The `.gitignore` already excludes `node_modules` and `dist`. To confirm that
-Git ignores them, run:
-
-```sh
-git check-ignore -v node_modules dist
-```
+## 📄 Licenses
 
 Country flags are from [Flag Icons](https://github.com/lipis/flag-icons);
 their license is available in [LICENSE](./src/assets/countries/LICENSE).
