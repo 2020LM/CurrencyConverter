@@ -36,7 +36,7 @@ export const Converter = () => {
         <div className={styles.controls}>
           <div className={styles.field}>
             <label htmlFor="amount">Amount</label>
-            <input type="text" id="amount" aria-label="Amount" value={amount} onChange={(e) => { void dispatch(exchangeCurrency(e.target.value)) }} />
+            <input type="number" min="0" step="any" id="amount" aria-label="Amount" value={amount} onChange={(e) => { void dispatch(exchangeCurrency(e.target.value)) }} />
           </div>
 
           <div className={styles.field}>
