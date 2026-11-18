@@ -10,8 +10,6 @@ exchange rates.
 
 [dailyecbrates.com](http://dailyecbrates.com/)
 
-The application will be published at this address in the future.
-
 ## 🧭 How to use the converter
 
 1. **Enter an amount.** Use the Amount field to enter a non-negative number,
