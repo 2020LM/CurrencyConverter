@@ -113,21 +113,16 @@ This project is intended to compare three ways of requesting ECB data:
 
 - **Redux Thunk:** implemented with a manual thunk that requests the required
   rates and dispatches actions to update the Redux slice.
-- **`createAsyncThunk`:** planned as an alternative using Redux Toolkit's
-  generated pending, fulfilled, and rejected actions.
+- **`createAsyncThunk`:** implemented as an alternative using Redux Toolkit's
+  generated pending, fulfilled, and rejected actions for each currency.
 - **RTK Query:** planned as an alternative using Redux Toolkit's data-fetching
   and caching tools.
 
-Only the manual Redux Thunk approach is currently implemented.
+The application currently uses the manual Redux Thunk approach. The
+`createAsyncThunk` slice is prepared separately and is not active in the UI;
+RTK Query is not implemented yet.
 
-## 🗂️ Git and generated files
-
-The `.gitignore` already excludes `node_modules` and `dist`. To confirm that
-Git ignores them, run:
-
-```sh
-git check-ignore -v node_modules dist
-```
+## 📄 Licenses
 
 Country flags are from [Flag Icons](https://github.com/lipis/flag-icons);
 their license is available in [LICENSE](./src/assets/countries/LICENSE).

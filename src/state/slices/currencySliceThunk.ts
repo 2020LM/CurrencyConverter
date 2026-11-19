@@ -2,24 +2,12 @@
 import { currencyData } from '../../components/converter/data/currencyData'
 import { EUR, USD } from '../../constants/currencyNames'
 import { selectCurrency } from '../types/currencyTypes'
-import type { ConversionState, CurrencySide, RateRequest } from '../types/currencyTypes'
+import type { CurrencySide, RateRequest } from '../types/currencyTypes'
+import { updateResult } from './updateResult'
 
 // External imports
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-
-const updateResult = (state: ConversionState) => {
-  const amount = Number(state.amount)
-  if (state.amount.trim() === '' || !Number.isFinite(amount) || amount < 0) {
-    state.result = null
-  } else if (state.from.code === state.to.code) {
-    state.result = amount
-  } else if (state.from.rate !== null && state.to.rate !== null) {
-    state.result = amount * state.to.rate / state.from.rate
-  } else {
-    state.result = null
-  }
-}
 
 const currencySlice = createSlice({
   name: 'currency',

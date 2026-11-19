@@ -1,6 +1,6 @@
 // Internal imports
 import Converter from '../view/converter.tsx'
-import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySlice'
+import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceThunk'
 
 
 // External imports

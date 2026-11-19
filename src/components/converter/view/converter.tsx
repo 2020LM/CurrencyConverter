@@ -1,7 +1,7 @@
 // Internal imports
 import styles from './converter.module.css'
 import swapIcon from '../../../assets/arrow-left-right.svg'
-import { setFrom, setTo, swapCurrencies } from '../../../state/slices/currencySlice'
+import { setFrom, setTo, swapCurrencies } from '../../../state/slices/currencySliceThunk'
 import { useAppSelector } from '../../../state/store'
 import type { AppDispatch } from '../../../state/store'
 import { useDebounce } from '../../../internalTools/customHooks/useDebounce'
