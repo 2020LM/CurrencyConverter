@@ -1,5 +1,5 @@
 // Internal imports
-import currencyReducer from './slices/currencySlice'
+import currencyReducer from './slices/currencySliceThunk'
 import type { RootState } from './types/storeTypes'
 
 // External imports
