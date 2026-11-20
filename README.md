@@ -91,6 +91,9 @@ Run the Jest test suite:
 npm test
 ```
 
+The converter tests currently use the RTK Query implementation and configure
+the API reducer and middleware in their own test stores.
+
 ## 📦 Production build
 
 Check TypeScript and create the production build in `dist`:
@@ -107,18 +110,29 @@ npm run preview
 
 ## 🔄 Redux data-fetching approaches
 
-This project is intended to compare three ways of requesting ECB data:
+This project compares three ways of requesting ECB data:
 
 - **Redux Thunk:** implemented with a manual thunk that requests the required
   rates and dispatches actions to update the Redux slice.
 - **`createAsyncThunk`:** implemented as an alternative using Redux Toolkit's
   generated pending, fulfilled, and rejected actions for each currency.
-- **RTK Query:** planned as an alternative using Redux Toolkit's data-fetching
-  and caching tools.
+- **RTK Query:** implemented using Redux Toolkit's data-fetching and caching
+  tools. This is the currently active approach.
 
-The application currently uses the manual Redux Thunk approach. The
-`createAsyncThunk` slice is prepared separately and is not active in the UI;
-RTK Query is not implemented yet.
+The [RTK Query API](./src/services/moneyRequest/RTKQuery.ts) defines a
+`getRate` endpoint that looks up a currency by code and reuses the shared ECB
+request logic. RTK Query caches results by endpoint and currency code. The
+converter uses `currentData` to avoid displaying a previous currency's rate
+while another rate is loading. EUR uses a rate of 1 without a request, and
+selecting the same currency on both sides does not require a rate request.
+
+The [RTK Query slice](./src/state/slices/currencySliceRTKQuery.ts) stores the
+amount and selected currencies; the API manages rate data, loading states,
+and errors. The [store](./src/state/store.ts) registers the API reducer and
+middleware. The manual Thunk and `createAsyncThunk` implementations remain in
+the project as alternatives. Switching approaches requires updating the
+store, component, and test configuration; changing imports alone is not
+sufficient because the component logic and state shapes differ.
 
 ## 📄 Licenses
 

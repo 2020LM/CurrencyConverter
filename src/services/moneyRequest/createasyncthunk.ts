@@ -1,6 +1,6 @@
 // Internal imports
 import type { CurrencySide } from '../../state/types/currencyTypes'
-import type { RootState } from '../../state/types/storeTypes'
+import type { ThunkRootState } from '../../state/types/storeTypes'
 import { requestRate } from './rateRequest'
 
 // External imports
@@ -9,7 +9,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit'
 export const fetchCurrencyRate = createAsyncThunk<
     number,
     { side: CurrencySide; code: string },
-    { state: RootState; rejectValue: string }
+    { state: ThunkRootState; rejectValue: string }
 >(
     'currency/fetchCurrencyRate',
     async ({ code }, { getState, rejectWithValue }) => {

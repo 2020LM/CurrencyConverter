@@ -1,6 +1,6 @@
 // Internal imports
 import { rateFailed, rateRequested, rateSucceeded, setAmount } from '../../state/slices/currencySliceThunk'
-import type { RootState } from '../../state/types/storeTypes'
+import type { ThunkRootState } from '../../state/types/storeTypes'
 import { requestRate } from './rateRequest'
 
 export { requestRate } from './rateRequest'
@@ -8,7 +8,7 @@ export { requestRate } from './rateRequest'
 // External imports
 import { nanoid, type ThunkAction, type UnknownAction } from '@reduxjs/toolkit'
 
-export const exchangeCurrency = (amount: string): ThunkAction<Promise<void>, RootState, unknown, UnknownAction> =>
+export const exchangeCurrency = (amount: string): ThunkAction<Promise<void>, ThunkRootState, unknown, UnknownAction> =>
     async (dispatch, getState) => {
         dispatch(setAmount(amount))
         const { from, to, currencies, requestIds } = getState().currency
