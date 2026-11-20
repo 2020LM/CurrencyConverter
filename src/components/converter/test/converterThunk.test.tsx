@@ -5,7 +5,11 @@ import Converter from '../view/converter.tsx'
 //import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceThunk'
 
 // CreateAsyncThunk Implementation
-import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceAsyncThunk'
+//import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceAsyncThunk'
+
+// RTK Query Implementation
+import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceRTKQuery'
+import { currencyApi } from '../../../services/moneyRequest/RTKQuery'
 
 // External imports
 import { configureStore } from '@reduxjs/toolkit'
@@ -52,8 +56,20 @@ afterEach(() => {
  globalThis.fetch = originalFetch
 })
 
+function createTestStore() {
+ return configureStore({
+  reducer: {
+   currency: currencyReducer,
+   // RTK Query Implementation
+   [currencyApi.reducerPath]: currencyApi.reducer,
+  },
+  // RTK Query Implementation
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(currencyApi.middleware),
+ })
+}
+
 function renderConverter() {
- const store = configureStore({ reducer: { currency: currencyReducer } })
+ const store = createTestStore()
  render(<Provider store={store}><Converter /></Provider>)
 }
 
@@ -117,7 +133,7 @@ test('converts a decimal amount', async () => {
 
 describe('currency conversion with the API', () => {
  function renderApiConverter(from: string, to: string) {
-  const store = configureStore({ reducer: { currency: currencyReducer } })
+  const store = createTestStore()
   store.dispatch(setFrom(from))
   store.dispatch(setTo(to))
   store.dispatch(setAmount('1'))
@@ -171,8 +187,8 @@ describe('currency conversion with the API', () => {
     text: async () => '<DataSet><Series><SeriesKey><Value id="CURRENCY" value="SGD"/></SeriesKey><Obs><ObsValue value="1.42"/></Obs></Series></DataSet>',
    })
   })
+  expect((await screen.findAllByText('1 USD = 1.28 SGD')).length).toBeGreaterThan(0)
   expect(screen.queryByRole('status')).not.toBeInTheDocument()
-  expect(screen.getAllByText('1 USD = 1.28 SGD').length).toBeGreaterThan(0)
  })
 
  test('stops showing loading when both currencies become the same', async () => {
@@ -235,7 +251,7 @@ describe('currency conversion with the API', () => {
 
    // Swap the currencies after the destination request fails.
    fireEvent.click(screen.getByRole('button', { name: RegExp('swap currencies', 'i') }))
-   expect(screen.getByRole('alert')).toHaveTextContent('USD: Error requesting USD rate: Server unavailable')
+   expect(await screen.findByRole('alert')).toHaveTextContent('USD: Error requesting USD rate: Server unavailable')
    expect(screen.getAllByText('1 USD = — EUR').length).toBeGreaterThan(0)
   })
  })
@@ -297,20 +313,21 @@ describe('currency conversion with the API', () => {
    expect(screen.getAllByText('1 SGD = — EUR').length).toBeGreaterThan(0)
   })
 
-  test('shows an error when the new To currency request fails', async () => {
+  test('reuses the cached rate when changing the To currency', async () => {
    mockRates()
    renderApiConverter('USD', 'EUR')
    expect((await screen.findAllByText('1 USD = 0.90 EUR')).length).toBeGreaterThan(0)
 
-   // Select SGD as the From currency before the destination request fails.
+   // Select SGD as the From currency after USD has been cached.
    fireEvent.change(screen.getByRole('combobox', { name: RegExp('from', 'i') }), { target: { value: 'SGD' } })
    expect((await screen.findAllByText('1 SGD = 0.70 EUR')).length).toBeGreaterThan(0)
    mockRates('USD')
 
    // Select USD as the To currency while the server is unavailable for USD.
    fireEvent.change(screen.getByRole('combobox', { name: RegExp('to', 'i') }), { target: { value: 'USD' } })
-   expect(await screen.findByRole('alert')).toHaveTextContent('USD: Error requesting USD rate: Server unavailable')
-   expect(screen.getAllByText('1 SGD = — USD').length).toBeGreaterThan(0)
+   expect((await screen.findAllByText('1 SGD = 0.78 USD')).length).toBeGreaterThan(0)
+   expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+   expect(fetchMock).toHaveBeenCalledTimes(2)
   })
  })
 })
