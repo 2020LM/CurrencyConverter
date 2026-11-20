@@ -1,5 +1,12 @@
 // Internal imports
-import currencyReducer from './slices/currencySliceThunk'
+
+// Thunk implementation
+// import currencyReducer from './slices/currencySliceThunk'
+
+// CreateAsynkThunk implementation
+import currencyReducer from './slices/currencySliceAsyncThunk'
+
+
 import type { RootState } from './types/storeTypes'
 
 // External imports

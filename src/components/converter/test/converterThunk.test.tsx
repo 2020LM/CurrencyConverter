@@ -1,7 +1,11 @@
 // Internal imports
 import Converter from '../view/converter.tsx'
-import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceThunk'
 
+// Thunk Implementation
+//import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceThunk'
+
+// CreateAsyncThunk Implementation
+import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceAsyncThunk'
 
 // External imports
 import { configureStore } from '@reduxjs/toolkit'
@@ -9,9 +13,11 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import '@testing-library/jest-dom'
 
+type MockResponse = Pick<Response, 'ok' | 'text'>
+
 // Keep the currency data while giving each flag a distinct test path.
 jest.mock('../data/currencyData', () => {
- const actual = jest.requireActual('../data/currencyData')
+ const actual = jest.requireActual<typeof import('../data/currencyData')>('../data/currencyData')
  return {
   currencyData: actual.currencyData.map((currency) => ({
    ...currency,
@@ -21,10 +27,10 @@ jest.mock('../data/currencyData', () => {
 })
 
 const originalFetch = globalThis.fetch
-let fetchMock
+let fetchMock: jest.Mock<Promise<MockResponse>, [RequestInfo | URL, RequestInit?]>
 
-function mockRates(failingCode) {
- const rates = { USD: '1.11', SGD: '1.42' }
+function mockRates(failingCode?: string) {
+ const rates: Record<string, string> = { USD: '1.11', SGD: '1.42' }
  fetchMock.mockImplementation(async (url) => {
   const code = Object.keys(rates).find((currency) => String(url).includes(`.${currency}.`))
   if (!code) throw new Error(`Unexpected request: ${url}`)
@@ -38,7 +44,7 @@ function mockRates(failingCode) {
 
 beforeEach(() => {
  fetchMock = jest.fn()
- globalThis.fetch = fetchMock
+ globalThis.fetch = (...args) => fetchMock(...args) as Promise<Response>
  mockRates()
 })
 
@@ -110,7 +116,7 @@ test('converts a decimal amount', async () => {
 })
 
 describe('currency conversion with the API', () => {
- function renderApiConverter(from, to) {
+ function renderApiConverter(from: string, to: string) {
   const store = configureStore({ reducer: { currency: currencyReducer } })
   store.dispatch(setFrom(from))
   store.dispatch(setTo(to))
@@ -119,7 +125,7 @@ describe('currency conversion with the API', () => {
  }
 
   test('shows loading while waiting for the exchange rate', async () => {
-   let resolveResponse
+   let resolveResponse!: (response: MockResponse) => void
    fetchMock.mockImplementation(() => new Promise((resolve) => { resolveResponse = resolve }))
 
    // Keep the USD response pending while checking the loading message.
@@ -137,7 +143,7 @@ describe('currency conversion with the API', () => {
   })
 
  test('keeps loading until both currency requests finish', async () => {
-  const responses = {}
+  const responses: Record<string, (response: MockResponse) => void> = {}
   fetchMock.mockImplementation((url) => new Promise((resolve) => {
    const code = ['USD', 'SGD'].find((currency) => String(url).includes(`.${currency}.`))
    if (!code) throw new Error(`Unexpected request: ${url}`)
@@ -170,7 +176,7 @@ describe('currency conversion with the API', () => {
  })
 
  test('stops showing loading when both currencies become the same', async () => {
-  let resolveResponse
+  let resolveResponse!: (response: MockResponse) => void
   fetchMock.mockImplementation(() => new Promise((resolve) => { resolveResponse = resolve }))
   renderApiConverter('USD', 'EUR')
   expect(screen.getByRole('status')).toHaveTextContent('Loading')
