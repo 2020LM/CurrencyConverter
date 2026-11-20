@@ -1,11 +1,17 @@
 // Internal imports
 import styles from './converter.module.css'
 import swapIcon from '../../../assets/arrow-left-right.svg'
-import { setFrom, setTo, swapCurrencies } from '../../../state/slices/currencySliceThunk'
-import { useAppSelector } from '../../../state/store'
 import type { AppDispatch } from '../../../state/store'
 import { useDebounce } from '../../../internalTools/customHooks/useDebounce'
-import { exchangeCurrency } from '../../../services/moneyRequest/thunkRequest'
+import { useAppSelector } from '../../../state/store'
+
+// Thunk Implementation
+//import { setFrom, setTo, swapCurrencies } from '../../../state/slices/currencySliceThunk'
+//import { exchangeCurrency } from '../../../services/moneyRequest/thunkRequest'
+
+// createAsyncTunk Implemenation
+import { setFrom, setTo, swapCurrencies } from '../../../state/slices/currencySliceAsyncThunk'
+import { exchangeCurrency } from '../../../services/moneyRequest/asyncThunkRequest'
 
 // External imports
 import { useEffect } from 'react'

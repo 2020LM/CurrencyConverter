@@ -4,12 +4,11 @@ import { EUR, USD } from '../../constants/currencyNames'
 import { fetchCurrencyRate } from '../../services/moneyRequest/createasyncthunk'
 import { selectCurrency } from '../types/currencyTypes'
 import type { CurrencySide } from '../types/currencyTypes'
-import type { RootState } from '../types/storeTypes'
 import { updateResult } from './updateResult'
 
 // External imports
 import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction, ThunkAction, UnknownAction } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 
 const currencySlice = createSlice({
   name: 'currency',
@@ -79,17 +78,5 @@ const currencySlice = createSlice({
 })
 
 export const { setAmount, setFrom, setTo, swapCurrencies } = currencySlice.actions
-
-export const exchangeCurrency = (amount: string): ThunkAction<Promise<void>, RootState, unknown, UnknownAction> =>
-  async (dispatch, getState) => {
-    dispatch(setAmount(amount))
-    const { from, to } = getState().currency
-    if (from.code === to.code) return
-
-    await Promise.all([
-      dispatch(fetchCurrencyRate({ side: 'from', code: from.code })),
-      dispatch(fetchCurrencyRate({ side: 'to', code: to.code })),
-    ])
-  }
 
 export default currencySlice.reducer
