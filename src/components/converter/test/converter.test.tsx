@@ -1,13 +1,6 @@
 // Internal imports
 import Converter from '../view/converter.tsx'
 
-// Thunk Implementation
-//import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceThunk'
-
-// CreateAsyncThunk Implementation
-//import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceAsyncThunk'
-
-// RTK Query Implementation
 import currencyReducer, { setAmount, setFrom, setTo } from '../../../state/slices/currencySliceRTKQuery'
 import { currencyApi } from '../../../services/moneyRequest/RTKQuery'
 
@@ -60,10 +53,8 @@ function createTestStore() {
  return configureStore({
   reducer: {
    currency: currencyReducer,
-   // RTK Query Implementation
    [currencyApi.reducerPath]: currencyApi.reducer,
   },
-  // RTK Query Implementation
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(currencyApi.middleware),
  })
 }
