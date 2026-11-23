@@ -110,31 +110,26 @@ To preview the build locally:
 npm run preview
 ```
 
-## 🔄 Redux data-fetching approaches
+## 🔄 Data fetching with RTK Query
 
-This project compares three ways of requesting ECB data:
-
-- **Redux Thunk:** implemented with a manual thunk that requests the required
-  rates and dispatches actions to update the Redux slice.
-- **`createAsyncThunk`:** implemented as an alternative using Redux Toolkit's
-  generated pending, fulfilled, and rejected actions for each currency.
-- **RTK Query:** implemented using Redux Toolkit's data-fetching and caching
-  tools. This is the currently active approach.
+RTK Query was chosen because it lets the component declare the data it needs
+while managing request states and caching automatically. Compared with manually
+coordinating requests and state updates using Redux Thunk or `createAsyncThunk`,
+this reduces boilerplate and helps reuse cached rates rather than repeat
+requests. The converter's data-fetching needs are straightforward, so this
+approach fits the project and makes it easier to develop and maintain.
 
 The [RTK Query API](./src/services/moneyRequest/RTKQuery.ts) defines a
-`getRate` endpoint that looks up a currency by code and reuses the shared ECB
-request logic. RTK Query caches results by endpoint and currency code. The
-converter uses `currentData` to avoid displaying a previous currency's rate
+`getRate` endpoint that looks up a currency by code and uses custom ECB
+request and XML parsing logic. RTK Query caches results by endpoint and
+currency code. The converter uses `currentData` to avoid displaying a previous currency's rate
 while another rate is loading. EUR uses a rate of 1 without a request, and
 selecting the same currency on both sides does not require a rate request.
 
 The [RTK Query slice](./src/state/slices/currencySliceRTKQuery.ts) stores the
 amount and selected currencies; the API manages rate data, loading states,
 and errors. The [store](./src/state/store.ts) registers the API reducer and
-middleware. The manual Thunk and `createAsyncThunk` implementations remain in
-the project as alternatives. Switching approaches requires updating the
-store, component, and test configuration; changing imports alone is not
-sufficient because the component logic and state shapes differ.
+middleware.
 
 ## 📄 Licenses
 

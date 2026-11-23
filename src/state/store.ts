@@ -1,12 +1,5 @@
 // Internal imports
 
-// Thunk implementation
-// import currencyReducer from './slices/currencySliceThunk'
-
-// CreateAsynkThunk implementation
-//import currencyReducer from './slices/currencySliceAsyncThunk'
-
-// RTK Query implementation
 import currencyReducer from './slices/currencySliceRTKQuery'
 import { currencyApi } from '../services/moneyRequest/RTKQuery'
 
@@ -19,10 +12,8 @@ import { useSelector } from 'react-redux'
 export const store = configureStore({
   reducer: {
     currency: currencyReducer,
-    // RTK Query implementation
     [currencyApi.reducerPath]: currencyApi.reducer,
   },
-  // RTK Query implementation
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(currencyApi.middleware),
 })
 
